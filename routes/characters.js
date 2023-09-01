@@ -69,7 +69,9 @@ router.post("/addcharacter", async (req, res) => {
       user.save();
       res.status(201).json(user);
     } else {
-      res.status(400).json({ message: "Already in favorites" });
+      user.favorites.characters.splice(isPresent, 1);
+      user.save();
+      res.status(201).json({ message: "character deleted" });
     }
   } catch (error) {
     res.status(400).json({ message: error.message });

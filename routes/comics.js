@@ -60,11 +60,17 @@ router.post("/addcomic", async (req, res) => {
   try {
     const { userId, comicId } = req.body;
     const user = await User.findById(userId);
-    user.favorites.comics.push(comicId);
+    const isPresent = await user.favorites.comics.indexOf(comicId);
 
-    user.save();
-
-    res.status(201).json(user);
+    if (isPresent === -1) {
+      user.favorites.comics.push(comicId);
+      user.save();
+      res.status(201).json(user);
+    } else {
+      user.favorites.comics.splice(isPresent, 1);
+      user.save();
+      res.status(201).json({ message: "character deleted" });
+    }
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

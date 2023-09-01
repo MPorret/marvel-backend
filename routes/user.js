@@ -8,16 +8,13 @@ const encBase64 = require("crypto-js/enc-base64"); // enc-Base64
 const express = require("express");
 const router = express.Router();
 
-// express-fileupload afin de récupérer les fichiers envoyer dans body
-const fileUpload = require("express-fileupload");
-
 // IMPORT DES MODELES
 const User = require("../models/user.js");
 
 // ROUTES
 
 // ROUTE SIGNUP : Inscription
-router.post("/signup", fileUpload(), async (req, res) => {
+router.post("/signup", async (req, res) => {
   try {
     const { username, email, password } = req.body;
     console.log(username, email, password);
@@ -32,19 +29,6 @@ router.post("/signup", fileUpload(), async (req, res) => {
         const salt = uid(16);
         const hash = SHA256(password + salt).toString(encBase64);
         const token = uid(16);
-
-        // Création de l'avatar
-        // const avatar = [];
-        // if (req.files) {
-        //   avatar.push(
-        //     await cloudinary.uploader.upload(
-        //       convertToBase64(req.files.picture),
-        //       {
-        //         folder: "/vinted/avatars",
-        //       }
-        //     )
-        //   );
-        // }
 
         // Création du nouvel utilisateur
         const newUser = new User({
