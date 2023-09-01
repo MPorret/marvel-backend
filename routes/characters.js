@@ -10,6 +10,8 @@ const User = require("../models/user");
 // ROUTE CHARACTERS : show all characters
 router.get("/characters", async (req, res) => {
   try {
+    const { userId } = req.query;
+
     const limit = 100;
     const skip = limit * (req.query.page - 1);
     const response = await axios.get(
@@ -21,6 +23,19 @@ router.get("/characters", async (req, res) => {
     for (let i = 0; i < response.data.results.length; i++) {
       response.data.search.push({ id: i, name: response.data.results[i].name });
     }
+
+    // get the favorites character of the user
+    const user = await User.findById(userId);
+    // console.log(response.data.results);
+    for (let i = 0; i < user.favorites.characters.length; i++) {
+      console.log(user.favorites.characters[i]);
+      const favCharacter = await response.data.results.find(
+        (character) => (character._id = userId)
+      );
+      favCharacter.favorite = true;
+      // console.log("ici", favCharacter);
+    }
+
     res.status(200).json(response.data);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -33,6 +48,7 @@ router.get("/character/:characterId", async (req, res) => {
     const response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/character/${req.params.characterId}?apiKey=${process.env.API_KEY}`
     );
+
     res.status(200).json(response.data);
   } catch (error) {
     res.status(400).json({ message: error.message });
