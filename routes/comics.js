@@ -34,7 +34,9 @@ router.get("/comics", async (req, res) => {
         const favComic = await response.data.results.find(
           (comic) => comic._id === user.favorites.comics[i]
         );
-        favComic.favorite = true;
+        if (favComic) {
+          favComic.favorite = true;
+        }
       }
     }
 
