@@ -24,16 +24,18 @@ router.get("/characters", async (req, res) => {
       response.data.search.push({ id: i, name: response.data.results[i].name });
     }
 
-    // get the favorites character of the user
-    const user = await User.findById(userId);
-    // console.log(response.data.results);
-    for (let i = 0; i < user.favorites.characters.length; i++) {
-      console.log(user.favorites.characters[i]);
-      const favCharacter = await response.data.results.find(
-        (character) => character._id === user.favorites.characters[i]
-      );
-      favCharacter.favorite = true;
-      // console.log("ici", favCharacter);
+    if (userId) {
+      // get the favorites character of the user
+      const user = await User.findById(userId);
+      // console.log(response.data.results);
+      for (let i = 0; i < user.favorites.characters.length; i++) {
+        console.log(user.favorites.characters[i]);
+        const favCharacter = await response.data.results.find(
+          (character) => character._id === user.favorites.characters[i]
+        );
+        favCharacter.favorite = true;
+        // console.log("ici", favCharacter);
+      }
     }
 
     res.status(200).json(response.data);

@@ -26,14 +26,16 @@ router.get("/comics", async (req, res) => {
       });
     }
 
-    // get the favorites character of the user
-    const user = await User.findById(userId);
-    for (let i = 0; i < user.favorites.comics.length; i++) {
-      // console.log(user.favorites.comics[i]);
-      const favComic = await response.data.results.find(
-        (comic) => comic._id === user.favorites.comics[i]
-      );
-      favComic.favorite = true;
+    if (userId) {
+      // get the favorites character of the user
+      const user = await User.findById(userId);
+      for (let i = 0; i < user.favorites.comics.length; i++) {
+        // console.log(user.favorites.comics[i]);
+        const favComic = await response.data.results.find(
+          (comic) => comic._id === user.favorites.comics[i]
+        );
+        favComic.favorite = true;
+      }
     }
 
     res.status(200).json(response.data);
