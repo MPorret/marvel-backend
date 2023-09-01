@@ -9,6 +9,8 @@ const User = require("../models/user");
 
 router.get("/comics", async (req, res) => {
   try {
+    const { userId } = req.query;
+
     const limit = 100;
     const skip = limit * (req.query.page - 1);
     const response = await axios.get(
@@ -23,6 +25,17 @@ router.get("/comics", async (req, res) => {
         name: response.data.results[i].title,
       });
     }
+
+    // get the favorites character of the user
+    const user = await User.findById(userId);
+    for (let i = 0; i < user.favorites.comics.length; i++) {
+      // console.log(user.favorites.comics[i]);
+      const favComic = await response.data.results.find(
+        (comic) => comic._id === user.favorites.comics[i]
+      );
+      favComic.favorite = true;
+    }
+
     res.status(200).json(response.data);
   } catch (error) {
     res.status(400).json({ message: error.message });
