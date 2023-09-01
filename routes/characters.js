@@ -30,7 +30,7 @@ router.get("/characters", async (req, res) => {
     for (let i = 0; i < user.favorites.characters.length; i++) {
       console.log(user.favorites.characters[i]);
       const favCharacter = await response.data.results.find(
-        (character) => (character._id = user.favorites.characters[i])
+        (character) => character._id === user.favorites.characters[i]
       );
       favCharacter.favorite = true;
       // console.log("ici", favCharacter);
