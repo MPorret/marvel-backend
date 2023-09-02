@@ -10,14 +10,14 @@ const User = require("../models/user");
 // ROUTE CHARACTERS : show all characters
 router.get("/characters", async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { userId, name, page } = req.query;
 
     const limit = 100;
-    const skip = limit * (req.query.page - 1);
+    const skip = limit * (page - 1);
     const response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/characters?apiKey=${
         process.env.API_KEY
-      }&name=${req.query.name && req.query.name}&limit=${limit}&skip=${skip}`
+      }&name=${name && name}&limit=${limit}&skip=${skip}`
     );
     response.data.search = [];
     for (let i = 0; i < response.data.results.length; i++) {
@@ -36,7 +36,6 @@ router.get("/characters", async (req, res) => {
         if (favCharacter) {
           favCharacter.favorite = true;
         }
-
         // console.log("ici", favCharacter);
       }
     }
@@ -60,8 +59,8 @@ router.get("/character/:characterId", async (req, res) => {
   }
 });
 
-// ROUTE FAVORITES : add a favorite character
-router.post("/addcharacter", async (req, res) => {
+// ROUTE FAVORITES : toggle (add or remove) a favorite character
+router.post("/togglecharacter", async (req, res) => {
   try {
     const { userId, characterId } = req.body;
     const user = await User.findById(userId);

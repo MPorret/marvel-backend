@@ -9,14 +9,14 @@ const User = require("../models/user");
 
 router.get("/comics", async (req, res) => {
   try {
-    const { userId } = req.query;
+    const { userId, page, title } = req.query;
 
     const limit = 100;
-    const skip = limit * (req.query.page - 1);
+    const skip = limit * (page - 1);
     const response = await axios.get(
       `https://lereacteur-marvel-api.herokuapp.com/comics?apiKey=${
         process.env.API_KEY
-      }&title=${req.query.title && req.query.title}&limit=${limit}&skip=${skip}`
+      }&title=${title && title}&limit=${limit}&skip=${skip}`
     );
     response.data.search = [];
     for (let i = 0; i < response.data.results.length; i++) {
@@ -46,19 +46,8 @@ router.get("/comics", async (req, res) => {
   }
 });
 
-router.get("/comic/:comicId", async (req, res) => {
-  try {
-    const response = await axios.get(
-      `https://lereacteur-marvel-api.herokuapp.com/comic/${req.params.comicId}?apiKey=${process.env.API_KEY}`
-    );
-    res.status(200).json(response.data);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// ROUTE FAVORITES : add a favorite comic
-router.post("/addcomic", async (req, res) => {
+// ROUTE FAVORITES : toggle (add or remove) a favorite comic
+router.post("/togglecomic", async (req, res) => {
   try {
     const { userId, comicId } = req.body;
     const user = await User.findById(userId);
